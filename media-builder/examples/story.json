@@ -1,0 +1,50 @@
+{
+  "id": "earhart-final-flight",
+  "title": "The Last Transmission",
+  "language": "en",
+  "sources": [
+    {
+      "name": "Smithsonian National Air and Space Museum",
+      "url": "https://airandspace.si.edu/explore/stories/amelia-earhart",
+      "note": "Dates, route, and radio log details as documented by the museum."
+    }
+  ],
+  "hook": "On July 2nd, 1937, a plane took off from New Guinea. It was never seen again.",
+  "beats": [
+    {
+      "id": "takeoff",
+      "text": "Amelia Earhart and navigator Fred Noonan left Lae, New Guinea, in a Lockheed Electra, bound for Howland Island — a strip of land two and a half thousand miles away.",
+      "visualHint": "A twin-engine 1930s aircraft on a remote Pacific airstrip at dawn, seen from a distance, haze over the runway",
+      "factuality": "fact"
+    },
+    {
+      "id": "itasca",
+      "text": "Near Howland, the Coast Guard cutter Itasca waited to guide them in by radio.",
+      "visualHint": "A 1930s coast guard cutter alone on a vast, flat ocean under an overcast sky, wide shot",
+      "factuality": "fact"
+    },
+    {
+      "id": "transmission",
+      "text": "At 7:42 in the morning, her voice came through: we must be on you, but cannot see you. Gas is running low.",
+      "visualHint": "Interior of a period ship radio room, a lone operator silhouetted against dim equipment lights",
+      "factuality": "fact"
+    },
+    {
+      "id": "silence",
+      "text": "Around an hour later, one final transmission. Then nothing.",
+      "visualHint": "Empty ocean horizon from the air, clouds, no land in sight, cold light",
+      "factuality": "fact"
+    },
+    {
+      "id": "search",
+      "text": "The Navy and Coast Guard searched for weeks. No plane, no wreckage, no answer was ever found.",
+      "visualHint": "Search ships spread across open water at dusk, seen from high above, tiny against the sea",
+      "factuality": "fact"
+    }
+  ],
+  "outro": "The Electra, Earhart, and Noonan were declared lost at sea. What happened in that final hour is still unknown.",
+  "style": {
+    "tone": "serious",
+    "palette": "moody-dark"
+  }
+}

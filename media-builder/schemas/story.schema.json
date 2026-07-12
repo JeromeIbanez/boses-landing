@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://media-builder.local/schemas/story.schema.json",
+  "title": "Story",
+  "description": "Single input for media-builder. All narration text lives here verbatim; downstream steps may never invent facts. Runtime validation is done with zod (src/types.ts is the source of truth).",
+  "type": "object",
+  "required": ["id", "title", "sources", "hook", "beats"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Lowercase slug; used for output paths (build/<id>/<id>.mp4)."
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "language": { "type": "string", "default": "en" },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Where the facts come from. At least one required; rendered as attribution on the final shot.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "url": { "type": "string", "format": "uri" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "hook": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Opening line, spoken verbatim over the first shot."
+    },
+    "beats": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The story, one narration line per beat, in order.",
+      "items": {
+        "type": "object",
+        "required": ["id", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique per story; 'hook' and 'outro' are reserved."
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Narration, spoken verbatim. Must be supported by the listed sources."
+          },
+          "visualHint": {
+            "type": "string",
+            "description": "Optional scene description for image generation. Anything depictive is tagged 'reconstruction' downstream."
+          },
+          "factuality": {
+            "type": "string",
+            "enum": ["fact", "context"],
+            "default": "fact",
+            "description": "'fact' = sourced claim; 'context' = framing/connective narration."
+          }
+        }
+      }
+    },
+    "outro": {
+      "type": "string",
+      "description": "Optional closing line, spoken verbatim over the final shot."
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tone": { "type": "string", "default": "serious" },
+        "palette": {
+          "type": "string",
+          "enum": ["moody-dark", "cold-blue", "warm-dusk"],
+          "default": "moody-dark"
+        }
+      }
+    }
+  }
+}

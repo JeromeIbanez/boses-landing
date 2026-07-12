@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://media-builder.local/schemas/shot-plan.schema.json",
+  "title": "ShotPlan",
+  "description": "Derived plan written to build/<storyId>/shot-plan.json. narrationText is always copied verbatim from story.json — planners (including the LLM one) only control visuals and motion. Runtime validation is done with zod (src/types.ts is the source of truth).",
+  "type": "object",
+  "required": ["storyId", "planner", "fps", "width", "height", "shots"],
+  "additionalProperties": false,
+  "properties": {
+    "storyId": { "type": "string" },
+    "planner": {
+      "type": "string",
+      "enum": ["claude", "deterministic"],
+      "description": "Which planner produced the creative fields."
+    },
+    "fps": { "const": 30 },
+    "width": { "const": 1080 },
+    "height": { "const": 1920 },
+    "shots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "beatId", "narrationText", "visual", "motion", "estDurationSec"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "description": "shot-01, shot-02, …" },
+          "beatId": {
+            "type": "string",
+            "description": "'hook', 'outro', or a beat id from the story."
+          },
+          "narrationText": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Verbatim from story.json. Never model output."
+          },
+          "visual": {
+            "type": "object",
+            "required": ["kind", "prompt", "assetTag"],
+            "additionalProperties": false,
+            "properties": {
+              "kind": { "type": "string", "enum": ["generated-image", "placeholder"] },
+              "prompt": { "type": "string" },
+              "assetTag": {
+                "type": "string",
+                "enum": ["documentary", "abstract", "reconstruction"],
+                "description": "'documentary' = real user-supplied material (reserved, unused by generators); 'abstract' = non-depictive backdrop; 'reconstruction' = generated imagery depicting events beyond the source material."
+              }
+            }
+          },
+          "motion": {
+            "type": "object",
+            "required": ["type", "intensity"],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["kenburns-in", "kenburns-out", "pan-up", "none"]
+              },
+              "intensity": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          },
+          "estDurationSec": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Speech-length estimate; replaced by real audio duration in render-manifest.json."
+          }
+        }
+      }
+    }
+  }
+}
