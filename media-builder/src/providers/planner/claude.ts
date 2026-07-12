@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { z } from "zod";
 import { AssetTagSchema, MotionSchema, type PlannedCreative, type Story } from "../../types";
 import { deterministicCreatives } from "./deterministic";
@@ -66,5 +69,8 @@ Respond with ONLY a JSON array of {"beatId", "prompt", "assetTag", "motion"} obj
 }
 
 export function claudePlannerAvailable(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
+  if (process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_CODE_OAUTH_TOKEN) return true;
+  // The Agent SDK can also use an authenticated Claude Code install
+  // (e.g. `claude login` on a Mac), no API key required.
+  return fs.existsSync(path.join(os.homedir(), ".claude", ".credentials.json"));
 }

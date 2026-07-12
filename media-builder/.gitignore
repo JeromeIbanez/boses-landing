@@ -3,3 +3,6 @@ build/
 .env
 *.log
 .DS_Store
+voices/*.onnx
+voices/*.onnx.json
+voices/*.tar.gz

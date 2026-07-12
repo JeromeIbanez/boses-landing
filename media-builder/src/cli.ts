@@ -5,6 +5,7 @@ import { buildManifest } from "./pipeline/manifest";
 import { generateNarration } from "./pipeline/narration";
 import { buildShotPlan } from "./pipeline/plan";
 import { renderVideo } from "./pipeline/render";
+import { writeReviewPage } from "./pipeline/review";
 import { loadStory } from "./pipeline/validate";
 import { loadDotEnv } from "./util/env";
 
@@ -65,6 +66,10 @@ async function main() {
     console.log(`\n✓ done in ${((Date.now() - started) / 1000).toFixed(0)}s`);
     console.log(`  video:    ${outputPath} (${sizeMb.toFixed(1)} MB, ${totalSec.toFixed(1)}s, 1080x1920)`);
   }
+
+  // 7. Review page — everything a human needs to approve or reject the build
+  const reviewPath = writeReviewPage(story, plan, manifest, outDir, `${story.id}.mp4`);
+  console.log(`  review:   ${reviewPath}`);
   console.log(`  plan:     ${path.join(outDir, "shot-plan.json")}`);
   console.log(`  manifest: ${path.join(outDir, "render-manifest.json")}`);
   console.log(`\n⚠ human review required before this video goes anywhere. This tool never posts.\n`);

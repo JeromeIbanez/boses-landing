@@ -53,6 +53,7 @@ story.json ──validate──> Story
            ──captions──> cues timed to real audio duration
            ──manifest──> render-manifest.json
            ──remotion──> <storyId>.mp4       (1080x1920, 30fps, h264)
+           ──review────> review.html         (video + per-shot prompt/tag/audio/sources)
 ```
 
 Every intermediate artifact is written to `build/<storyId>/` so each step is inspectable and re-runnable. `--skip-render` stops before the (slow) render step; `--out` overrides the output dir.
@@ -117,7 +118,7 @@ Every intermediate artifact is written to `build/<storyId>/` so each step is ins
 
 | Role | Real provider | Fallback chain | Selection |
 |---|---|---|---|
-| Shot planning | Claude Agent SDK (`ANTHROPIC_API_KEY`) | deterministic planner | `MEDIA_BUILDER_PLANNER` |
+| Shot planning | Claude Agent SDK (`ANTHROPIC_API_KEY` **or** a logged-in Claude Code install) | deterministic planner | `MEDIA_BUILDER_PLANNER` |
 | Visuals | OpenAI `gpt-image-1` (`OPENAI_API_KEY`) | offline atmospheric SVG placeholders | `MEDIA_BUILDER_IMAGES` |
 | Narration | Piper (`PIPER_VOICE=/path/to/voice.onnx`) | macOS `say` → silence (timed) | `MEDIA_BUILDER_TTS` |
 | Captions | — | proportional chunk timing (swap for forced alignment later) | — |
@@ -128,11 +129,15 @@ Each provider is a small module implementing one interface (`src/providers/*/typ
 ### Mac setup for the full experience
 
 ```bash
-brew install piper-tts             # or: pip install piper-tts
-# download a voice, e.g. en_US-lessac-medium.onnx (+ .json) from the piper voices repo
-cp .env.example .env               # set PIPER_VOICE, OPENAI_API_KEY, ANTHROPIC_API_KEY
+pip install piper-tts              # or: brew install piper-tts
+mkdir -p voices && cd voices
+curl -LO "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/medium/en_US-ryan-medium.onnx"
+curl -LO "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/medium/en_US-ryan-medium.onnx.json"
+cd .. && cp .env.example .env      # set OPENAI_API_KEY (PIPER_VOICE already points at ./voices)
 npm run build-story -- --input examples/story.json
 ```
+
+The Claude planner needs no key if Claude Code is installed and logged in on the machine.
 
 Without Piper, on a Mac the pipeline automatically uses the built-in `say` command so you still get real narration. `npm run studio` opens the composition in Remotion Studio for visual iteration.
 
